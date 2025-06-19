@@ -1,10 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using Tournament.Api.Extensions;
 using Tournament.Data.Data;
+
 namespace Tournament.Api
 {
     public static class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<TournamentContext>(options =>
@@ -20,6 +23,8 @@ namespace Tournament.Api
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            await app.SeedDataAsync();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
