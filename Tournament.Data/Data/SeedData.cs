@@ -7,7 +7,7 @@ namespace Tournament.Data.Data
     {
         public static async Task Initialize(TournamentContext context)
         {
-            context.Database.EnsureCreated();
+            await context.Database.MigrateAsync();
 
             if (!context.TournamentDetails.Any())
             {
