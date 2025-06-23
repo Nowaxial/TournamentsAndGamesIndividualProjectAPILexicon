@@ -17,6 +17,8 @@ namespace Tournament.Api
             // Repositories
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            builder.Services.AddAutoMapper(typeof(TournamentMappings));
+
             // Add services to the container.
             builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
             .AddNewtonsoftJson();
