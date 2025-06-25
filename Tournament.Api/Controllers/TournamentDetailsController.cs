@@ -14,10 +14,14 @@ namespace Tournament.Api.Controllers
     {
         // GET: api/TournamentDetails
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TournamentDetailsDto>>> GetTournamentDetails()
+        public async Task<ActionResult<IEnumerable<TournamentDetailsDto>>> GetTournamentDetails(bool includeGames = false)
         {
-            var tournaments = await unitOfWork.TournamentRepository.GetAllAsync();
-            var dto = mapper.Map<IEnumerable<TournamentDetailsDto>>(tournaments);
+            //var tournaments = await unitOfWork.TournamentRepository.GetAllAsync();
+            //var dto = mapper.Map<IEnumerable<TournamentDetailsDto>>(tournaments);
+
+            var dto = includeGames ? mapper.Map<IEnumerable<TournamentDetailsDto>>(await unitOfWork.TournamentRepository.GetAllAsync(true)) 
+                : mapper.Map<IEnumerable<TournamentDetailsDto>>(await unitOfWork.TournamentRepository.GetAllAsync());
+
             return Ok(dto);
         }
 

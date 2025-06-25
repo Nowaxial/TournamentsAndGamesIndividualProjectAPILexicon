@@ -7,6 +7,6 @@
         public DateTime StartDate { get; set; }
 
         // En turnering kan ha många matcher
-        public ICollection<Game>? Game { get; set; }
+        public ICollection<Game>? Games { get; set; }
     }
 }

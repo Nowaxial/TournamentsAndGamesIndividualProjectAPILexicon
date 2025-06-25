@@ -6,7 +6,6 @@ using Tournament.Core.Entities;
 using Tournament.Core.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
 
-
 namespace Tournament.Api.Controllers
 {
     [Route("api/[controller]")]
@@ -56,7 +55,6 @@ namespace Tournament.Api.Controllers
             {
                 return NotFound("Game doesn't exist");
             }
-            
 
             var gameToUpdate = mapper.Map<GameUpdateDto, Game>(dto, existingGame);
             unitOfWork.GameRepository.Update(gameToUpdate);

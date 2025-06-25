@@ -15,7 +15,7 @@ namespace Tournament.Data.Data
                 {
                     Title = "Vintercupen 2025",
                     StartDate = new DateTime(2025, 1, 1),
-                    Game =
+                    Games =
                     [
                         new () { Title = "Gruppspel", Time = new DateTime(2025, 1, 10) },
                         new () { Title = "Öppningsmatch", Time = new DateTime(2025, 1, 8) },
@@ -28,7 +28,7 @@ namespace Tournament.Data.Data
                 {
                     Title = "Vårcupen 2025",
                     StartDate = new DateTime(2025, 3, 1),
-                    Game =
+                    Games =
                     [
                         new () { Title = "Gruppspel", Time = new DateTime(2025, 4, 10) },
                         new () { Title = "Öppningsmatch", Time = new DateTime(2025, 4, 8) },
@@ -41,7 +41,7 @@ namespace Tournament.Data.Data
                 {
                     Title = "Sommarturneringen",
                     StartDate = new DateTime(2025, 6, 1),
-                    Game =
+                    Games =
                     [
                         new () { Title = "Gruppspel", Time = new DateTime(2025, 7, 10) },
                         new () { Title = "Öppningsmatch", Time = new DateTime(2025, 7, 8) },
@@ -53,7 +53,7 @@ namespace Tournament.Data.Data
                 {
                     Title = "Höstturneringen",
                     StartDate = new DateTime(2025, 9, 1),
-                    Game =
+                    Games =
                     [
                         new () { Title = "Gruppspel", Time = new DateTime(2025, 7, 10) },
                         new () { Title = "Öppningsmatch", Time = new DateTime(2025, 7, 8) },

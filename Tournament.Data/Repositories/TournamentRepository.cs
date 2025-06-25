@@ -17,12 +17,17 @@ namespace Tournament.Data.Repositories
             return await context.TournamentDetails.AnyAsync(t => t.Id == id);
         }
 
-        public async Task<IEnumerable<TournamentDetails>> GetAllAsync()
+        public async Task<IEnumerable<TournamentDetails>> GetAllAsync(bool includeGames = false)
         {
-            return await context.TournamentDetails.ToListAsync();
+            return includeGames
+                ? await context.TournamentDetails.Include(t => t.Games).ToListAsync()
+                : await context.TournamentDetails.ToListAsync();
         }
 
-        public async Task<TournamentDetails> GetAsync(int id) => await context.TournamentDetails.SingleOrDefaultAsync(t => t.Id == id);
+        public async Task<TournamentDetails> GetAsync(int id)
+        {
+            return await context.TournamentDetails.SingleOrDefaultAsync(t => t.Id == id);
+        }
 
         public void Remove(TournamentDetails tournamentDetails)
         {
