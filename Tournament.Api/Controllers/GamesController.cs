@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Tournament.Core.DTOs;
 using Tournament.Core.Entities;
 using Tournament.Core.Repositories;
+using Microsoft.AspNetCore.JsonPatch;
+
 
 namespace Tournament.Api.Controllers
 {
@@ -126,6 +128,53 @@ namespace Tournament.Api.Controllers
                 return StatusCode(500, "Failed to delete game");
             }
 
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchGame(int id, JsonPatchDocument<GameUpdateDto> patchDoc)
+        {
+            if (patchDoc == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var gameToUpdate = await unitOfWork.GameRepository.GetAsync(id);
+            if (gameToUpdate == null)
+            {
+                return NotFound("Game does not exist");
+            }
+
+            var gameDetailsdto = mapper.Map<GameUpdateDto>(gameToUpdate);
+            patchDoc.ApplyTo(gameDetailsdto, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            mapper.Map(gameDetailsdto, gameToUpdate);
+            unitOfWork.GameRepository.Update(gameToUpdate);
+
+            try
+            {
+                await unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await unitOfWork.GameRepository.AnyAsync(id))
+                {
+                    return NotFound("Game does not exist");
+                }
+                else
+                {
+                    return StatusCode(500, "Failed to update game");
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to update game");
+            }
             return NoContent();
         }
     }

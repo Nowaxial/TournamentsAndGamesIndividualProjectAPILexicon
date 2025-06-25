@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tournament.Core.DTOs;
 using Tournament.Core.Entities;
 using Tournament.Core.Repositories;
-using Tournament.Data.Repositories;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Tournament.Api.Controllers
 {
@@ -135,6 +134,53 @@ namespace Tournament.Api.Controllers
                 return StatusCode(500, "Failed to delete tournament");
             }
 
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchTournamentDetails(int id, JsonPatchDocument<TournamentDetailsUpdateDto> patchDoc)
+        {
+            if (patchDoc == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var tournamentToUpdate = await unitOfWork.TournamentRepository.GetAsync(id);
+            if (tournamentToUpdate == null)
+            {
+                return NotFound("Tournament does not exist");
+            }
+
+            var tournamentDetailsdto = mapper.Map<TournamentDetailsUpdateDto>(tournamentToUpdate);
+            patchDoc.ApplyTo(tournamentDetailsdto, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            mapper.Map(tournamentDetailsdto, tournamentToUpdate);
+            unitOfWork.TournamentRepository.Update(tournamentToUpdate);
+            
+            try
+            {
+                await unitOfWork.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await unitOfWork.TournamentRepository.AnyAsync(id))
+                {
+                    return NotFound("Tournament does not exist");
+                }
+                else
+                {
+                    return StatusCode(500, "Failed to update tournament");
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to update tournament");
+            }
             return NoContent();
         }
     }

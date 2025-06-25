@@ -22,8 +22,8 @@ namespace Tournament.Api
             builder.Services.AddAutoMapper(typeof(TournamentMappings));
 
             // Add services to the container.
-            builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true);
-            //.AddNewtonsoftJson();
+            builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
+            .AddNewtonsoftJson();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
