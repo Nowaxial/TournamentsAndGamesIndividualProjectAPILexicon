@@ -1,54 +1,76 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Humanizer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Tournament.Core.DTOs;
 using Tournament.Core.Entities;
 using Tournament.Core.Repositories;
+using Tournament.Data.Repositories;
 
 namespace Tournament.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TournamentDetailsController(IUnitOfWork unitOfWork) : ControllerBase
+    public class TournamentDetailsController(IUnitOfWork unitOfWork, IMapper mapper) : ControllerBase
     {
         // GET: api/TournamentDetails
         [HttpGet]
-        public async Task<IEnumerable<TournamentDetails>> GetTournamentDetails()
+        public async Task<ActionResult<IEnumerable<TournamentDetailsDto>>> GetTournamentDetails()
         {
-            return await unitOfWork.TournamentRepository.GetAllAsync();
+            var tournaments = await unitOfWork.TournamentRepository.GetAllAsync();
+            var dto = mapper.Map<IEnumerable<TournamentDetailsDto>>(tournaments);
+            return Ok(dto);
         }
 
         // GET: api/TournamentDetails/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TournamentDetails>> GetTournamentDetails(int id)
+        public async Task<ActionResult<TournamentDetailsDto>> GetTournamentDetails(int id)
         {
-            TournamentDetails tournamentDetails = await unitOfWork.TournamentRepository.GetAsync(id);
+            //var tournamentDetailsDto = mapper.ConfigurationProvider.CreateMapper().Map<TournamentDetailsDto>(await unitOfWork.TournamentRepository.GetAsync(id));
+            //TournamentDetails tournamentDetails = await unitOfWork.TournamentRepository.GetAsync(id);
 
-            if (tournamentDetails == null)
+            var tournament = await unitOfWork.TournamentRepository.GetAsync(id);
+
+            if (tournament == null)
             {
                 return NotFound();
             }
 
-            return tournamentDetails;
+            var dto = mapper.Map<TournamentDetailsDto>(tournament);
+            return Ok(dto);
         }
 
         // PUT: api/TournamentDetails/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTournamentDetails(int id, TournamentDetails tournamentDetails)
+        public async Task<IActionResult> PutTournament(int id, TournamentDetailsUpdateDto tournamentDetailsUpdateDto)
         {
-            if (id != tournamentDetails.Id)
+            if (id != tournamentDetailsUpdateDto.Id)
             {
                 return BadRequest();
             }
 
-            unitOfWork.TournamentRepository.Add(tournamentDetails);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            var existingTournament = await unitOfWork.TournamentRepository.GetAsync(id);
+            if (existingTournament == null)
+            {
+                return NotFound("Tournament not found");
+            }
+
+            var tournament = mapper.Map<TournamentDetailsUpdateDto, TournamentDetails>(tournamentDetailsUpdateDto, existingTournament);
+
+            unitOfWork.TournamentRepository.Update(tournament);
             try
             {
                 await unitOfWork.CompleteAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await TournamentDetailsExists(id))
+                if (!await unitOfWork.TournamentRepository.AnyAsync(id))
                 {
                     return NotFound();
                 }
@@ -64,13 +86,33 @@ namespace Tournament.Api.Controllers
         // POST: api/TournamentDetails
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TournamentDetails>> PostTournamentDetails(TournamentDetails tournamentDetails)
+        public async Task<ActionResult<TournamentDetails>> PostTournamentDetails(TournamentDetailsDto dto)
         {
+            //unitOfWork.TournamentRepository.Add(tournamentDetails);
+
+            //await unitOfWork.CompleteAsync();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var tournamentDetails = mapper.Map<TournamentDetails>(dto);
             unitOfWork.TournamentRepository.Add(tournamentDetails);
+            try
+            {
+                await unitOfWork.CompleteAsync();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to save tournament");
+            }
 
-            await unitOfWork.CompleteAsync();
+            return CreatedAtAction(nameof(GetTournamentDetails), new { id = tournamentDetails.Id }, "Tournament created successfully");
+            //var entity = mapper.Map<TournamentDetails>(dto);
+            //unitOfWork.TournamentRepository.Add(entity);
+            //await unitOfWork.CompleteAsync();
 
-            return CreatedAtAction("GetTournamentDetails", new { id = tournamentDetails.Id }, tournamentDetails);
+            //var createdDto = mapper.Map<TournamentDetailsDto>(entity);
+            //return CreatedAtAction(nameof(GetTournamentDetails), new { id = entity.Id }, createdDto);
         }
 
         // DELETE: api/TournamentDetails/5
@@ -82,16 +124,18 @@ namespace Tournament.Api.Controllers
             {
                 return NotFound();
             }
-
             unitOfWork.TournamentRepository.Remove(tournamentDetails);
-            await unitOfWork.CompleteAsync();
+
+            try
+            {
+                await unitOfWork.CompleteAsync();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Failed to delete tournament");
+            }
 
             return NoContent();
-        }
-
-        private Task<bool> TournamentDetailsExists(int id)
-        {
-            return unitOfWork.TournamentRepository.AnyAsync(id);
         }
     }
 }

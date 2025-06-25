@@ -11,29 +11,58 @@ namespace Tournament.Data.Data
 
             if (!context.TournamentDetails.Any())
             {
-                var tournament1 = new TournamentDetails
+                var winterCup = new TournamentDetails
                 {
                     Title = "Vintercupen 2025",
-                    StartDate = new DateTime(2025, 1, 15),
-                    Games =
+                    StartDate = new DateTime(2025, 1, 1),
+                    Game =
                     [
+                        new () { Title = "Gruppspel", Time = new DateTime(2025, 1, 10) },
+                        new () { Title = "Öppningsmatch", Time = new DateTime(2025, 1, 8) },
                         new () { Title = "Final", Time = new DateTime(2025, 1, 16) },
                         new () { Title = "Semifinal", Time = new DateTime(2025, 1, 15) }
                     ]
                 };
 
-                var tournament2 = new TournamentDetails
+                var springCup = new TournamentDetails
                 {
-                    Title = "Sommarturneringen",
-                    StartDate = new DateTime(2025, 6, 10),
-                    Games =
+                    Title = "Vårcupen 2025",
+                    StartDate = new DateTime(2025, 3, 1),
+                    Game =
                     [
-                        new () { Title = "Öppningsmatch", Time = new DateTime(2025, 6, 11) },
-                        new () { Title = "Gruppspel", Time = new DateTime(2025, 6, 12) }
+                        new () { Title = "Gruppspel", Time = new DateTime(2025, 4, 10) },
+                        new () { Title = "Öppningsmatch", Time = new DateTime(2025, 4, 8) },
+                        new () { Title = "Final", Time = new DateTime(2025, 4, 16) },
+                        new () { Title = "Semifinal", Time = new DateTime(2025, 4, 15) }
                     ]
                 };
 
-                context.TournamentDetails.AddRange(tournament1, tournament2);
+                var summerCup = new TournamentDetails
+                {
+                    Title = "Sommarturneringen",
+                    StartDate = new DateTime(2025, 6, 1),
+                    Game =
+                    [
+                        new () { Title = "Gruppspel", Time = new DateTime(2025, 7, 10) },
+                        new () { Title = "Öppningsmatch", Time = new DateTime(2025, 7, 8) },
+                        new () { Title = "Final", Time = new DateTime(2025, 7, 16) },
+                        new () { Title = "Semifinal", Time = new DateTime(2025, 7, 15) }
+                    ]
+                };
+                var autumnCup = new TournamentDetails
+                {
+                    Title = "Höstturneringen",
+                    StartDate = new DateTime(2025, 9, 1),
+                    Game =
+                    [
+                        new () { Title = "Gruppspel", Time = new DateTime(2025, 7, 10) },
+                        new () { Title = "Öppningsmatch", Time = new DateTime(2025, 7, 8) },
+                        new () { Title = "Final", Time = new DateTime(2025, 7, 16) },
+                        new () { Title = "Semifinal", Time = new DateTime(2025, 7, 15) }
+                    ]
+                };
+
+                context.TournamentDetails.AddRange(winterCup, springCup, summerCup, autumnCup);
                 await context.SaveChangesAsync();
             }
         }

@@ -7,9 +7,9 @@ namespace Tournament.Data.Repositories
 {
     public class TournamentRepository(TournamentContext context) : ITournamentRepository
     {
-        public void Add(TournamentDetails tournament)
+        public void Add(TournamentDetails tournamentDetails)
         {
-            context.TournamentDetails.Add(tournament);
+            context.TournamentDetails.Add(tournamentDetails);
         }
 
         public async Task<bool> AnyAsync(int id)
@@ -22,19 +22,16 @@ namespace Tournament.Data.Repositories
             return await context.TournamentDetails.ToListAsync();
         }
 
-        public async Task<TournamentDetails> GetAsync(int id)
+        public async Task<TournamentDetails> GetAsync(int id) => await context.TournamentDetails.SingleOrDefaultAsync(t => t.Id == id);
+
+        public void Remove(TournamentDetails tournamentDetails)
         {
-            return await context.TournamentDetails.SingleOrDefaultAsync(t => t.Id == id);
+            context.TournamentDetails.Remove(tournamentDetails);
         }
 
-        public void Remove(TournamentDetails tournament)
+        public void Update(TournamentDetails tournamentDetails)
         {
-            context.TournamentDetails.Remove(tournament);
-        }
-
-        public void Update(TournamentDetails tournament)
-        {
-            context.TournamentDetails.Update(tournament);
+            context.TournamentDetails.Update(tournamentDetails);
         }
     }
 }

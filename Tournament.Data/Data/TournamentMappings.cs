@@ -9,8 +9,13 @@ namespace Tournament.Data.Data
        public TournamentMappings()
         {
             CreateMap<TournamentDetails, TournamentDetailsDto>()
-                .ForMember (dest => dest.EndDate, opt => opt.MapFrom(src => src.StartDate.AddMonths(3)));
-            CreateMap<Game, GameDto>();
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.StartDate.AddMonths(3)))
+                .ReverseMap();
+            CreateMap<Game, GameDto>().ReverseMap();
+            CreateMap<GameCreateDto, Game>().ReverseMap();
+            CreateMap<GameUpdateDto, Game>().ReverseMap();
+            CreateMap<TournamentDetailsCreateDto, TournamentDetails>().ReverseMap();
+            CreateMap<TournamentDetailsUpdateDto, TournamentDetails>().ReverseMap();
         }
     }
 }

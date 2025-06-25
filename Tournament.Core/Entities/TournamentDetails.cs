@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tournament.Core.Entities
+﻿namespace Tournament.Core.Entities
 {
     public class TournamentDetails
     {
@@ -13,6 +7,6 @@ namespace Tournament.Core.Entities
         public DateTime StartDate { get; set; }
 
         // En turnering kan ha många matcher
-        public ICollection<Game>? Games { get; set; }
+        public ICollection<Game>? Game { get; set; }
     }
 }
