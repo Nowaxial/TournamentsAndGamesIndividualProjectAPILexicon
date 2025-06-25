@@ -13,11 +13,12 @@ namespace Tournament.Api.Controllers
     public class GamesController(IUnitOfWork unitOfWork, IMapper mapper) : ControllerBase
     {
         // GET: api/Games
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<GameDto>>> GetGame()
+        [HttpGet("title/{title}")]
+        public async Task<ActionResult<IEnumerable<GameDto>>> GetGame(string title)
         {
             var games = await unitOfWork.GameRepository.GetAllAsync();
-            var gameDtos = mapper.Map<IEnumerable<GameDto>>(games);
+            var filteredGames = games.Where(g => g.Title == title).ToList();
+            var gameDtos = mapper.Map<IEnumerable<GameDto>>(filteredGames);
             return Ok(gameDtos);
         }
 
