@@ -24,7 +24,7 @@ namespace Tournament.Data.Repositories
                 : await context.TournamentDetails.ToListAsync();
         }
 
-        public async Task<TournamentDetails> GetAsync(int id)
+        public async Task<TournamentDetails?> GetAsync(int id)
         {
             return await context.TournamentDetails.SingleOrDefaultAsync(t => t.Id == id);
         }

@@ -12,8 +12,8 @@ using Tournament.Data.Data;
 namespace Tournament.Data.Migrations
 {
     [DbContext(typeof(TournamentContext))]
-    [Migration("20250624135558_Updated")]
-    partial class Updated
+    [Migration("20250626110427_Initial Migration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,9 +37,7 @@ namespace Tournament.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TournamentDetailsId")
                         .HasColumnType("int");
@@ -48,7 +46,7 @@ namespace Tournament.Data.Migrations
 
                     b.HasIndex("TournamentDetailsId");
 
-                    b.ToTable("Game");
+                    b.ToTable("Games");
                 });
 
             modelBuilder.Entity("Tournament.Core.Entities.TournamentDetails", b =>
@@ -73,7 +71,7 @@ namespace Tournament.Data.Migrations
             modelBuilder.Entity("Tournament.Core.Entities.Game", b =>
                 {
                     b.HasOne("Tournament.Core.Entities.TournamentDetails", null)
-                        .WithMany("Game")
+                        .WithMany("Games")
                         .HasForeignKey("TournamentDetailsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -81,7 +79,7 @@ namespace Tournament.Data.Migrations
 
             modelBuilder.Entity("Tournament.Core.Entities.TournamentDetails", b =>
                 {
-                    b.Navigation("Game");
+                    b.Navigation("Games");
                 });
 #pragma warning restore 612, 618
         }

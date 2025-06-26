@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tournament.Core.DTOs;
 using Tournament.Core.Entities;
 using Tournament.Core.Repositories;
-using Microsoft.AspNetCore.JsonPatch;
 
 namespace Tournament.Api.Controllers
 {
@@ -19,7 +19,7 @@ namespace Tournament.Api.Controllers
             //var tournaments = await unitOfWork.TournamentRepository.GetAllAsync();
             //var dto = mapper.Map<IEnumerable<TournamentDetailsDto>>(tournaments);
 
-            var dto = includeGames ? mapper.Map<IEnumerable<TournamentDetailsDto>>(await unitOfWork.TournamentRepository.GetAllAsync(true)) 
+            var dto = includeGames ? mapper.Map<IEnumerable<TournamentDetailsDto>>(await unitOfWork.TournamentRepository.GetAllAsync(true))
                 : mapper.Map<IEnumerable<TournamentDetailsDto>>(await unitOfWork.TournamentRepository.GetAllAsync());
 
             return Ok(dto);
@@ -165,7 +165,7 @@ namespace Tournament.Api.Controllers
 
             mapper.Map(tournamentDetailsdto, tournamentToUpdate);
             unitOfWork.TournamentRepository.Update(tournamentToUpdate);
-            
+
             try
             {
                 await unitOfWork.CompleteAsync();

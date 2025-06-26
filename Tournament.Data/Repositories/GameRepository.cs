@@ -22,7 +22,7 @@ public class GameRepository(TournamentContext context) : IGameRepository
         return await context.Games.ToListAsync();
     }
 
-    public async Task<Game> GetAsync(int id)
+    public async Task<Game?> GetAsync(int id)
     {
         return await context.Games.SingleOrDefaultAsync(t => t.Id == id);
     }

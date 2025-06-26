@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Tournament.Core.Entities
+﻿namespace Tournament.Core.Entities
 {
     public class Game
     {
