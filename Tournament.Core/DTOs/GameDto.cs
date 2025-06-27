@@ -6,8 +6,8 @@ namespace Tournament.Core.DTOs
     {
         [Required(ErrorMessage = "Tournament title is a required field.")]
         [MaxLength(60, ErrorMessage = "Maximum length for the Title is 60 characters.")]
-        public string? Title { get; set; }
-        public DateTime Time { get; set; }
+        public string? Title { get; init; }
+        public DateTime Time { get; init; }
         //public int TournamentDetailsId { get; set; }
     }
 }

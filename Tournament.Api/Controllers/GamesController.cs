@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using Tournament.Core.DTOs;
 using Tournament.Core.Entities;
 using Tournament.Core.Repositories;
@@ -13,28 +14,45 @@ namespace Tournament.Api.Controllers
     public class GamesController(IUnitOfWork unitOfWork, IMapper mapper) : ControllerBase
     {
         // GET: api/Games
-        [HttpGet("title/{title}")]
-        public async Task<ActionResult<IEnumerable<GameDto>>> GetGame(string title)
+        [HttpGet()]
+        public async Task<ActionResult<GameCreateDto>> GetGame(string? sortField = null, bool ascending = true)
         {
             var games = await unitOfWork.GameRepository.GetAllAsync();
-            var filteredGames = games.Where(g => g.Title == title).ToList();
-            var gameDtos = mapper.Map<IEnumerable<GameDto>>(filteredGames);
+
+            if (!string.IsNullOrEmpty(sortField))
+            {
+                switch (sortField.ToLower())
+                {
+                    case "title":
+                        games = ascending ? games.OrderBy(g => g.Title).ToList() : games.OrderByDescending(g => g.Title).ToList();
+                        break;
+                    case "time":
+                        games = ascending ? games.OrderBy(g => g.Time).ToList() : games.OrderByDescending(g => g.Time).ToList();
+                        break;
+                    case "tournamentDetailsId":
+                        games = ascending ? games.OrderBy(g => g.TournamentDetailsId).ToList() : games.OrderByDescending(g => g.TournamentDetailsId).ToList();
+                        break;
+                    default:
+                        return BadRequest();
+                }
+            }
+
+            // Map entities to DTOs and return
+            var gameDtos = mapper.Map<List<GameCreateDto>>(games);
             return Ok(gameDtos);
         }
 
-        // GET: api/Games/5
+        //GET: api/Games/5
         [HttpGet("{id}")]
         public async Task<ActionResult<GameDto>> GetGame(int id)
         {
             var game = await unitOfWork.GameRepository.GetAsync(id);
-
             if (game == null)
             {
-                return NotFound();
+                return NotFound("Game doesn't exist");
             }
-            mapper.Map<GameDto>(game);
-
-            return Ok(game);
+            var gameDto = mapper.Map<GameDto>(game);
+            return Ok(gameDto);
         }
 
         // PUT: api/Games/5
@@ -175,6 +193,16 @@ namespace Tournament.Api.Controllers
                 return StatusCode(500, "Failed to update game");
             }
             return NoContent();
+        }
+
+        // GET: title/{title}
+        [HttpGet("title/{title}")]
+        public async Task<ActionResult<IEnumerable<GameDto>>> GetGameByTitle(string title)
+        {
+            var games = await unitOfWork.GameRepository.GetAllAsync();
+            var filteredGames = games.Where(g => g.Title == title).ToList();
+            var gameDtos = mapper.Map<IEnumerable<GameDto>>(filteredGames);
+            return Ok(gameDtos);
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public record GameUpdateDto : GameDto
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
 
     }
 }
